@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
-from model.connection import session
-from model.model import Task
+from tasks import session
+from tasks.model.model import Task
 
 
 def add_task(name, deadline=None, description=None):

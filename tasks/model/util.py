@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 
-from view.terminal import print_message, ERROR_MSG
+from tasks.view.terminal import print_message, ERROR_MSG
 
 COMMAND_INDEX = 1
 ALLOWED_COMMANDS = ["add", "update", "remove", "list", "finish"]

@@ -1,8 +1,8 @@
 import sys
 
-from model.data_manager import add_task, get_column_names, get_task_values, find_task_by_hash, finish_task
-from model.util import COMMAND_INDEX, ALLOWED_COMMANDS, validate_task_arguments, validate_listing_arguments
-from view.terminal import print_table
+from tasks.model.data_manager import add_task, get_column_names, get_task_values, find_task_by_hash, finish_task
+from tasks.model.util import COMMAND_INDEX, ALLOWED_COMMANDS, validate_task_arguments, validate_listing_arguments
+from tasks.view.terminal import print_table
 
 
 def main():

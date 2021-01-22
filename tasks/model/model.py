@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, DateTime, Boolean
 
-from model.util import generate_hash
+from tasks.model.util import generate_hash
 
 Base = declarative_base()
 

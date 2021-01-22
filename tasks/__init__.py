@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.ddl import CreateTable
 from sqlalchemy_utils import database_exists, create_database
 
-from model.model import Task
+from tasks.model.model import Task
 
 engine = create_engine("mysql+mysqldb://{}:{}@{}/{}".format(
     os.environ.get("MYSQL_USERNAME"),
