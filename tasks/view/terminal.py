@@ -1,12 +1,10 @@
 ERROR_MSG = {
-    1: "Invalid argument. Type tasks.py add --help to see some tips",
-    2: "Wrong arguments provided. Check task.py add --help to see proper structure.",
-    3: "Invalid argument for 'add' method. Use tasks.py add --help to see possible options.",
-    4: "Too many arguments provided. Check --help to see proper structure",
-    5: "Some error occurred while unpacking your optional arguments. Type tasks.py add --help to see proper structure",
-    6: "Wrong argument provided. Check --help to see proper structure.",
-    7: "Wrong date provided. Date should be in format YYYY-MM-DD.",
-    8: "Deadline date cannot be settled in past."
+    0: "Unknown command provided. Check --help to see possible options",
+    1: "Invalid arguments provided. Check --help to see proper structure.",
+    2: "Too many arguments provided. Check --help to see proper structure.",
+    3: "Invalid optional arguments provided. Check --help to see proper structure.",
+    4: "Wrong date provided. Date should be in format YYYY-MM-DD and can not be settled in past.",
+    5: "No task with provided hash in database. Check it and try again."
 }
 
 

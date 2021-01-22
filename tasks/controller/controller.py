@@ -1,35 +1,32 @@
 import sys
 
-from tasks.model.data_manager import (add_task, get_column_names, get_task_values,
-                                      find_task_by_hash, finish_task, validate_and_update_task)
-from tasks.model.util import COMMAND_INDEX, ALLOWED_COMMANDS, validate_add_task_arguments, validate_listing_arguments
-from tasks.view.terminal import print_table, print_message
+from tasks.model.data_manager import (get_column_names, get_task_values,
+                                      find_task_by_hash, finish_task, validate_and_update_task, validate_and_add_task)
+from tasks.model.util import COMMAND_INDEX, ALLOWED_COMMANDS, validate_listing_arguments
+from tasks.view.terminal import print_table, print_message, ERROR_MSG
 
 
 def main():
     args = sys.argv
-    if args[COMMAND_INDEX] not in ALLOWED_COMMANDS:
-        print("Wrong command provided. Type --help to see possible options")
+    cmd = args[COMMAND_INDEX]
+    if cmd not in ALLOWED_COMMANDS:
+        print_message(ERROR_MSG.get(0))
 
-    elif args[COMMAND_INDEX] == "add":
-        task = validate_add_task_arguments(args)
-        if task:
-            add_task(name=task.get("name"),
-                     deadline=task.get("deadline"),
-                     description=task.get("description"))
+    elif cmd == "add":
+        success, result = validate_and_add_task(args)
+        print_message(result) if success else print_message(ERROR_MSG.get(result))
 
-    elif args[COMMAND_INDEX] == "list":
+    elif cmd == "list":
         listing_option = validate_listing_arguments(args)
         if listing_option:
             print_table([get_column_names(), *get_task_values(listing_option)])
 
-    elif args[COMMAND_INDEX] == "finish":
-        task = find_task_by_hash(args, hash_index=2)
-        if task:
-            finish_task(task)
+    elif cmd == "finish":
+        success, result = finish_task(args)
+        print_message(result) if success else print_message(ERROR_MSG.get(result))
 
-    elif args[COMMAND_INDEX] == "update":
+    elif cmd == "update":
         if validate_and_update_task(args):
-            print_message("Updating successfull")
+            print_message("Updating successful")
         else:
             print_message("Something went wrong")
