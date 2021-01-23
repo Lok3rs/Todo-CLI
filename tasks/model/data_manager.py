@@ -74,12 +74,25 @@ def find_task_by_hash(sys_args: List[str], hash_index: int) -> Task:
     return task
 
 
-def finish_task(sys_args: List[str]) -> Union[Tuple[bool, str], Tuple[bool, int]]:
+def finish_task(sys_args: List[str]) -> Tuple[bool, int]:
     task = find_task_by_hash(sys_args, 2)
-    if task:
+    if task and task.done:
+        return False, 9
+    elif task:
         task.done = True
         session.commit()
         return True, 3
+    return False, 5
+
+
+def undo_task(sys_args: List[str]) -> Tuple[bool, int]:
+    task = find_task_by_hash(sys_args, 2)
+    if task and not task.done:
+        return False, 10
+    elif task:
+        task.done = False
+        session.commit()
+        return True, 5
     return False, 5
 
 

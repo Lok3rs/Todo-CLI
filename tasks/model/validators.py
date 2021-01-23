@@ -117,14 +117,14 @@ def validate_listing_arguments(sys_args: List[str]) -> Union[str, int]:
 
 
 def validate_help(sys_args: List[str]) -> Tuple[bool, int]:
-    OPTIONAL_ARGS = {"add": 1, "update": 2, "remove": 3, "finish": 4, "list": 5}
+    OPTIONAL_ARGS = {"add": 1, "update": 2, "remove": 3, "finish": 4, "list": 5, "undo": 6, "find": 7}
     MAX_ARGS_ARR_LENGTH = 3
     MIN_ARGS_ARR_LENGTH = 2
     OPTIONAL_ARG_INDEX = 2
 
     if (len(sys_args) == MAX_ARGS_ARR_LENGTH and sys_args[OPTIONAL_ARG_INDEX] not in OPTIONAL_ARGS) \
             or len(sys_args) > MAX_ARGS_ARR_LENGTH:
-        return False, 1
+        return False, 8
 
     if len(sys_args) == MIN_ARGS_ARR_LENGTH:
         return True, 0

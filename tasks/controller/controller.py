@@ -1,50 +1,20 @@
 import sys
-from typing import List
 
-from tasks.model.data_manager import finish_task, validate_and_update_task, validate_and_add_task, \
-    validate_and_get_list, validate_and_remove_task
+from tasks.model.data_manager import (finish_task, validate_and_update_task, validate_and_add_task, 
+                                      validate_and_get_list, validate_and_remove_task, undo_task)
 from tasks.model.util import COMMAND_INDEX, ALLOWED_COMMANDS
 from tasks.model.validators import validate_help
-from tasks.view.terminal import print_table, print_message, ERROR_MSG, SUCCESS_MSG, HELP_MSG
-
-
-def add_task_controller(sys_args: List[str]):
-    success, result = validate_and_add_task(sys_args)
-    print_message(SUCCESS_MSG.get(result)) if success else print_message(ERROR_MSG.get(result))
-
-
-def list_tasks_controller(sys_args: List[str]):
-    success, result = validate_and_get_list(sys_args)
-    print_table(result) if success else print_message(ERROR_MSG.get(result))
-
-
-def finish_task_controller(sys_args: List[str]):
-    success, result = finish_task(sys_args)
-    print_message(SUCCESS_MSG.get(result)) if success else print_message(ERROR_MSG.get(result))
-
-
-def update_task_controller(sys_args: List[str]):
-    success, result = validate_and_update_task(sys_args)
-    print_message(SUCCESS_MSG.get(result)) if success else print_message(ERROR_MSG.get(result))
-
-
-def remove_task_controller(sys_args: List[str]):
-    success, result = validate_and_remove_task(sys_args)
-    print_message(SUCCESS_MSG.get(result)) if success else print_message(ERROR_MSG.get(result))
-
-
-def help_controller(sys_args: List[str]):
-    success, result = validate_help(sys_args)
-    print_message(HELP_MSG.get(result)) if success else print_message(ERROR_MSG.get(result))
+from tasks.view.terminal import print_message, ERROR_MSG
 
 
 controller_options = {
-    "add": add_task_controller,
-    "list": list_tasks_controller,
-    "finish": finish_task_controller,
-    "update": update_task_controller,
-    "remove": remove_task_controller,
-    "help": help_controller
+    "add": validate_and_add_task,
+    "list": validate_and_get_list,
+    "finish": finish_task,
+    "update": validate_and_update_task,
+    "remove": validate_and_remove_task,
+    "help": validate_help,
+    "undo": undo_task
 }
 
 
@@ -53,4 +23,10 @@ def main():
     cmd = sys_args[COMMAND_INDEX]
     if cmd not in ALLOWED_COMMANDS:
         print_message(ERROR_MSG.get(0))
-    controller_options.get(cmd)(sys_args)
+        return
+    try:
+        func = controller_options.get(cmd)
+        success, result = func(sys_args)
+        print_message(success, result, print_help=func == validate_help, listing=func == validate_and_get_list)
+    except TypeError:
+        print_message(ERROR_MSG.get(0))
