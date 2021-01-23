@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import List, Union, Tuple
+from typing import List, Union, Tuple, Dict
 
 from tasks import session
 from tasks.model.model import Task
@@ -79,10 +79,10 @@ def finish_task(sys_args: List[str]) -> Union[Tuple[bool, str], Tuple[bool, int]
     return False, 5
 
 
-def validate_and_update_task(sys_args: List[str]) -> Union:
+def validate_and_update_task(sys_args: List[str]) -> Tuple[bool, int]:
     task = find_task_by_hash(sys_args, -1)
     if not task:
-        return False, f"Can not find task with hash of {sys_args[-1]}"
+        return False, 5
     new_values_validator = validate_update_args(sys_args)
     if type(new_values_validator) != dict:
         return False, new_values_validator
@@ -96,8 +96,17 @@ def validate_and_update_task(sys_args: List[str]) -> Union:
     return True, 2
 
 
-def validate_and_get_list(sys_args):
+def validate_and_get_list(sys_args: List[str]) -> Union[Tuple[bool, List], Tuple[bool, int]]:
     list_option = validate_listing_arguments(sys_args)
     if type(list_option) != str:
         return False, list_option
     return True, get_table(list_option)
+
+
+def validate_and_remove_task(sys_args: List[str]) -> Tuple[bool, int]:
+    task = find_task_by_hash(sys_args, 2)
+    if not task:
+        return False, 5
+    session.delete(task)
+    session.commit()
+    return True, 4

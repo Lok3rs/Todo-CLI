@@ -25,11 +25,13 @@ def validate_add_task_arguments(sys_args: List) -> Union[int, Dict]:
 
     provided_args = unpack_args(optional_args)
 
-    if not provided_args or not all(arg in OPTIONAL_ARGS_KEYS_ADD for arg in provided_args.keys()):
+    if not provided_args or \
+            not all(arg in OPTIONAL_ARGS_KEYS_ADD for arg in provided_args.keys()):
         return 3
 
     deadline = provided_args.get("--deadline")
-    if deadline and not validate_deadline(deadline):
+    if deadline and \
+            not validate_deadline(deadline):
         return 4
 
     deadline = validate_deadline(deadline)
@@ -44,12 +46,14 @@ def validate_update_args(sys_args: List[str]) -> Union[int, Dict]:
     OPTIONAL_ARGS_KEYS_UPDATE = ["--name", "--deadline", "--description"]
     optional_args = re.findall(r"\[([^]]+)]", " ".join(sys_args))
 
-    if len(sys_args) > MAX_UPDATE_ARR_LENGTH or len(sys_args) - len(optional_args) * 2 != 3:
+    if len(sys_args) > MAX_UPDATE_ARR_LENGTH \
+            or len(sys_args) - len(optional_args) * 2 != 3:
         return 1
 
     provided_args = unpack_args(optional_args)
 
-    if not provided_args or not all(arg in OPTIONAL_ARGS_KEYS_UPDATE for arg in provided_args.keys()):
+    if not provided_args \
+            or not all(arg in OPTIONAL_ARGS_KEYS_UPDATE for arg in provided_args.keys()):
         return 3
 
     deadline = provided_args.get("--deadline")
@@ -87,7 +91,8 @@ def validate_listing_arguments(sys_args: List[str]) -> Union[str, int]:
     except IndexError:
         return 1
 
-    if len(optional_args) > MAX_OPT_ARGS_AMOUNT or len(sys_args) > MAX_ARGS_ARR_LENGTH:
+    if len(optional_args) > MAX_OPT_ARGS_AMOUNT \
+            or len(sys_args) > MAX_ARGS_ARR_LENGTH:
         return 2
 
     return optional_args[0]

@@ -1,7 +1,8 @@
 import sys
 from typing import List
 
-from tasks.model.data_manager import finish_task, validate_and_update_task, validate_and_add_task, validate_and_get_list
+from tasks.model.data_manager import finish_task, validate_and_update_task, validate_and_add_task, \
+    validate_and_get_list, validate_and_remove_task
 from tasks.model.util import COMMAND_INDEX, ALLOWED_COMMANDS
 from tasks.view.terminal import print_table, print_message, ERROR_MSG, SUCCESS_MSG
 
@@ -26,11 +27,17 @@ def update_task_controller(sys_args: List[str]):
     print_message(SUCCESS_MSG.get(result)) if success else print_message(ERROR_MSG.get(result))
 
 
+def remove_task_controller(sys_args: List[str]):
+    success, result = validate_and_remove_task(sys_args)
+    print_message(SUCCESS_MSG.get(result)) if success else print_message(ERROR_MSG.get(result))
+
+
 controller_options = {
     "add": add_task_controller,
     "list": list_tasks_controller,
     "finish": finish_task_controller,
-    "update": update_task_controller
+    "update": update_task_controller,
+    "remove": remove_task_controller
 }
 
 

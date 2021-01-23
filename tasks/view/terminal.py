@@ -11,7 +11,8 @@ ERROR_MSG = {
 SUCCESS_MSG = {
     1: "Task created successfully.",
     2: "Task updated successfully",
-    3: "Task marked as done."
+    3: "Task marked as done.",
+    4: "Task deleted successfully"
 }
 
 
