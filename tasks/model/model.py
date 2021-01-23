@@ -14,7 +14,7 @@ class Task(Base):
     id = Column(Integer, primary_key=True)
     name = Column('name', String(30), nullable=False)
     deadline = Column('deadline', DateTime, nullable=True)
-    description = Column('description', String(100), nullable=True, default="---")
+    description = Column('description', String(100), nullable=True)
     creation_date = Column("creation_date", DateTime, nullable=False, default=datetime.utcnow)
     task_hash = Column("hash", Integer, nullable=False, default=generate_hash(name))
     done = Column("done", Boolean, nullable=False, default=False)

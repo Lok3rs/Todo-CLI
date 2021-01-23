@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 from typing import List, Union, Tuple
 
+from sqlalchemy.sql import null
+
 from tasks import session
 from tasks.model.model import Task
 from tasks.model.validators import validate_add_task_arguments, validate_update_args, validate_listing_arguments
@@ -33,21 +35,21 @@ def get_tasks(option: str) -> List[Task]:
     week_later = (datetime.date(datetime.utcnow()) + timedelta(days=7)).strftime("%Y-%m-%d")
     option_dict = {
         "--all": session.query(Task)
-                        .filter(Task.done.is_(False))
-                        .order_by(Task.deadline.is_(None), Task.deadline)
-                        .all(),
+            .filter(Task.done.is_(False))
+            .order_by(Task.deadline.is_(None), Task.deadline)
+            .all(),
         "--today": session.query(Task)
-                          .filter(Task.deadline == today, Task.done.is_(False))
-                          .all(),
+            .filter(Task.deadline == today, Task.done.is_(False))
+            .all(),
         "--missed": session.query(Task)
-                           .filter(Task.deadline < today, Task.done.is_(False))
-                           .all(),
+            .filter(Task.deadline < today, Task.done.is_(False))
+            .all(),
         "--week": session.query(Task)
-                           .filter(Task.deadline < week_later, Task.done.is_(False))
-                           .all(),
+            .filter(Task.deadline < week_later, Task.done.is_(False))
+            .all(),
         "--done": session.query(Task)
-                         .filter(Task.done)
-                         .all()
+            .filter(Task.done)
+            .all()
     }
     return option_dict.get(option)
 
@@ -59,8 +61,8 @@ def get_column_names() -> List[str]:
 def get_task_values(option: str) -> List[List]:
     return [[task.name,
              task.deadline.strftime("%Y-%m-%d") if task.deadline else "No hurry",
-             task.description,
-             task.creation_date,
+             task.description if task.description else "---",
+             task.creation_date.strftime("%Y-%m-%d %H:%M"),
              task.task_hash]
             for task in get_tasks(option)]
 
@@ -79,10 +81,10 @@ def find_task_for_table(sys_args: List[str]) -> Union[Tuple[bool, List], Tuple[b
     if task:
         return True, [get_column_names(),
                       [task.name,
-                      task.deadline.strftime("%Y-%m-%d") if task.deadline else "No hurry",
-                      task.description,
-                      task.creation_date,
-                      task.task_hash]]
+                       task.deadline.strftime("%Y-%m-%d") if task.deadline else "No hurry",
+                       task.description if task.description else "---",
+                       task.creation_date.strftime("%Y-%m-%d %h:%M"),
+                       task.task_hash]]
     return False, 5
 
 
@@ -116,12 +118,23 @@ def validate_and_update_task(sys_args: List[str]) -> Tuple[bool, int]:
         new_values_validator = validate_update_args(sys_args)
         if type(new_values_validator) != dict:
             return False, new_values_validator
-        task.name = new_values_validator.get("name") \
-            if new_values_validator.get("name") else task.name
-        task.deadline = new_values_validator.get("deadline") \
-            if new_values_validator.get("deadline") else task.deadline
-        task.description = new_values_validator.get("description") \
-            if new_values_validator.get("description") else task.description
+        new_name = new_values_validator.get("name")
+        new_deadline = new_values_validator.get("deadline")
+        new_description = new_values_validator.get("description")
+        print(new_values_validator)
+        print(new_name)
+        print(new_description)
+        task.name = new_name \
+            if new_name else task.name
+
+        task.deadline = None if new_deadline == "remove" \
+            else (new_deadline if new_deadline
+                  else task.deadline)
+
+        task.description = None if new_description == "remove" \
+            else (new_description if new_description
+                  else task.description)
+
         session.commit()
         return True, 2
     except DataError:

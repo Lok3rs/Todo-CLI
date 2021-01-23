@@ -68,11 +68,10 @@ def validate_update_args(sys_args: List[str]) -> Union[int, Dict]:
         return 3
 
     deadline = provided_args.get("--deadline")
-    if deadline and not validate_deadline(deadline):
+    if deadline and not validate_deadline(deadline) and deadline != "remove":
         return 4
 
-    deadline = validate_deadline(deadline)
-
+    deadline = validate_deadline(deadline) if deadline != "remove" else "remove"
     description = provided_args.get("--description")
     name = provided_args.get("--name")
 
