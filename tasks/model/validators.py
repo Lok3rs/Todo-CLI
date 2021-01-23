@@ -72,3 +72,21 @@ def validate_deadline(date):
         if date < datetime.today().date():
             return False
         return date
+
+
+def validate_listing_arguments(args):
+    OPTIONAL_ARGS = ["--all", "--today", "--week", "--missed", "--done"]
+    MAX_OPT_ARGS_AMOUNT = 1
+    MAX_ARGS_ARR_LENGTH = 3
+
+    try:
+        optional_args = re.findall(r"\[([^]]+)\]", " ".join(args))
+        if optional_args[0] not in OPTIONAL_ARGS:
+            return 1
+    except IndexError:
+        return 1
+
+    if len(optional_args) > MAX_OPT_ARGS_AMOUNT or len(args) > MAX_ARGS_ARR_LENGTH:
+        return 2
+
+    return optional_args[0]

@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from tasks import session
 from tasks.model.model import Task
-from tasks.model.validators import validate_add_task_arguments, validate_update_args
+from tasks.model.validators import validate_add_task_arguments, validate_update_args, validate_listing_arguments
 
 
 def validate_and_add_task(args):
@@ -60,6 +60,10 @@ def get_task_values(option):
             for task in get_tasks(option)]
 
 
+def get_table(option):
+    return [get_column_names(), *get_task_values(option)]
+
+
 def find_task_by_hash(args, hash_index):
     task = session.query(Task).filter(Task.task_hash == args[hash_index]).first()
     return task
@@ -78,10 +82,19 @@ def validate_and_update_task(args):
     task = find_task_by_hash(args, -1)
     if not task:
         print("Wrong hash")
-        return False
-    new_values = validate_update_args(args)
-    task.name = new_values.get("name") if new_values.get("name") else task.name
-    task.deadline = new_values.get("deadline") if new_values.get("deadline") else task.deadline
-    task.description = new_values.get("description") if new_values.get("description") else task.description
+        return False, f"Can not find task with hash of {args[-1]}"
+    new_values_validator = validate_update_args(args)
+    if type(new_values_validator) != dict:
+        return False, new_values_validator
+    task.name = new_values_validator.get("name") if new_values_validator.get("name") else task.name
+    task.deadline = new_values_validator.get("deadline") if new_values_validator.get("deadline") else task.deadline
+    task.description = new_values_validator.get("description") if new_values_validator.get("description") else task.description
     session.commit()
-    return True
+    return True, "Task successfully updated!"
+
+
+def validate_and_get_list(args):
+    list_option = validate_listing_arguments(args)
+    if type(list_option) != str:
+        return False, list_option
+    return True, get_table(list_option)
