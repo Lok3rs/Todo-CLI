@@ -1,16 +1,43 @@
+from typing import Dict
+
 from tasks.view.messages import HELP_MSG, SUCCESS_MSG, ERROR_MSG
 
+main_menu_options = {1: "Add new task",
+                     2: "List tasks",
+                     3: "Remove task",
+                     4: "Update existing task",
+                     5: "Finish/undo task",
+                     6: "Find task",
+                     7: "Turn on/off cleaning screen",
+                     0: "Exit"}
 
-def print_message(success, result, print_help=False, listing=False):
+list_menu_options = {1: "List not finished tasks",
+                     2: "List tasks where deadline is today",
+                     3: "List tasks where deadline is within 1 week",
+                     4: "List tasks where deadline is already in past",
+                     5: "List finished tasks",
+                     0: "Back to main menu"}
+
+
+def print_menu(options: Dict, header: str = "Main Menu"):
+    print(header)
+    for k, v in options.items():
+        print(f"{k} - {v}")
+
+
+def get_user_input(label="Your choice: "):
+    return input(label)
+
+
+def print_message(success, msg_index, print_help=False, listing=False):
     if success and listing:
-        print_table(result)
+        print_table(msg_index)
     elif success and print_help:
-        print(HELP_MSG.get(result))
+        print(HELP_MSG.get(msg_index))
     elif success:
-        print(SUCCESS_MSG.get(result))
+        print(SUCCESS_MSG.get(msg_index))
     else:
-        print(ERROR_MSG.get(result))
-
+        print(ERROR_MSG.get(msg_index))
 
 
 def print_table(tables):
@@ -45,3 +72,7 @@ def print_table(tables):
                                  (white_spaces // 2) * " ")
         print(column_separator + column_separator.join(printable_row) + column_separator)
         print(break_line if row != table_with_strings[-1] else end_line)
+
+
+def show_info(info):
+    print(info)

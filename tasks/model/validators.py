@@ -4,6 +4,9 @@ from typing import List, Union, Dict, Tuple
 
 from tasks.model.util import unpack_args
 
+COMMAND_INDEX = 1
+ALLOWED_COMMANDS = ["add", "update", "remove", "list", "finish", "help", "undo", "find", "lazy"]
+
 
 def validate_add_task_arguments(sys_args: List) -> Union[int, Dict]:
     ARGS_KEYS_ADD = ["--name", "--deadline", "--description"]
@@ -110,6 +113,7 @@ def validate_listing_arguments(sys_args: List[str]) -> Union[str, int]:
 
     if len(provided_args) > MAX_OPT_ARGS_AMOUNT \
             or len(sys_args) > MAX_ARGS_ARR_LENGTH:
+        return 2
         return 2
 
     return provided_args[0]

@@ -9,7 +9,8 @@ ERROR_MSG = {
     7: "Too long value provided for some argument, check >>> tasks.py help <<< to see requirements",
     8: "Invalid argument for help command.",
     9: "This task is already marked as done.",
-    10: "This task isn't done yet."
+    10: "This task isn't done yet.",
+    11: "Operation canceled."
 }
 
 SUCCESS_MSG = {
@@ -17,7 +18,7 @@ SUCCESS_MSG = {
     2: "Task updated successfully",
     3: "Task marked as done.",
     4: "Task deleted successfully",
-    5: "Task marked as undone."
+    5: "Task marked as undone.",
 }
 
 HELP_MSG = {

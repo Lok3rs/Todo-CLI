@@ -1,7 +1,5 @@
+import os
 from typing import Union, List, Dict
-
-COMMAND_INDEX = 1
-ALLOWED_COMMANDS = ["add", "update", "remove", "list", "finish", "help", "undo", "find"]
 
 
 def generate_hash(obj: Union[str, int]) -> int:
@@ -14,3 +12,11 @@ def unpack_args(args: List) -> Union[Dict, bool]:
         return args_dict
     except ValueError:
         return False
+
+
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+
+def wait():
+    input("Type ENTER to continue...")

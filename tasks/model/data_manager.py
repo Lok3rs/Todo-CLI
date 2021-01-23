@@ -1,15 +1,82 @@
 from datetime import datetime, timedelta
 from typing import List, Union, Tuple
 
-from sqlalchemy.sql import null
-
 from tasks import session
 from tasks.model.model import Task
 from tasks.model.validators import validate_add_task_arguments, validate_update_args, validate_listing_arguments
 from sqlalchemy.exc import DataError
 
+"""
+Universal functions
+"""
+
+
+def add_task(name: str, deadline: datetime.date = None, description: str = None) -> Task:
+    """
+    Function which add a new task to database.
+    :param name: Task.name, string(max 30 chars long). Required
+    :param deadline: Task.deadline, datetime.date object. Optional.
+    :param description: Task.description, string(max 150 chars long). Optional
+    :return: Task object with given properties.
+    """
+    new_task = Task(name=name, deadline=deadline, description=description)
+    session.add(new_task)
+    session.commit()
+    return new_task
+
+
+def get_column_names() -> List[str]:
+    """
+    :return: list of database column names declared in Task object.
+    """
+    return Task.__table__.columns.keys()[1:-1]
+
+
+def get_tasks(option: str) -> List[Task]:
+    """
+    Function which returns a list of Task objects with given criteria.
+    :param option: filtering option for dictionary declared in a function. Possible: --all, --today, --missed, --week, --done
+    :return: list of Task objects filtered by given option. If wrong option provided, return all objects.
+    """
+    today = datetime.date(datetime.utcnow()).strftime("%Y-%m-%d")
+    week_later = (datetime.date(datetime.utcnow()) + timedelta(days=7)).strftime("%Y-%m-%d")
+    option_dict = {
+        "--all": session.query(Task)
+                        .filter(Task.done.is_(False))
+                        .order_by(Task.deadline.is_(None), Task.deadline)
+                        .all(),
+        "--today": session.query(Task)
+                          .filter(Task.deadline == today, Task.done.is_(False))
+                          .all(),
+        "--missed": session.query(Task)
+                           .filter(Task.deadline < today, Task.done.is_(False))
+                           .all(),
+        "--week": session.query(Task)
+                         .filter(Task.deadline < week_later, Task.done.is_(False))
+                         .all(),
+        "--done": session.query(Task)
+                         .filter(Task.done)
+                         .all()
+    }
+    if option not in option_dict.keys():
+        return option_dict.get("--all")
+    return option_dict.get(option)
+
+
+
+
+
+"""
+Functions for command line mode
+"""
+
 
 def validate_and_add_task(sys_args: List[str]) -> Tuple[bool, int]:
+    """
+    Validate and, if validated, fires add_task function, which creates a new Task class object
+    :param sys_args: List of arguments received from the command line
+    :return: Tuple of boolean and integer. Boolean means if it was successful, integer is index of message from messages.py
+    """
     try:
         task_validation = validate_add_task_arguments(sys_args)
         if type(task_validation) == dict:
@@ -23,41 +90,6 @@ def validate_and_add_task(sys_args: List[str]) -> Tuple[bool, int]:
         return False, 7
 
 
-def add_task(name: str, deadline: datetime = None, description: str = None) -> Task:
-    new_task = Task(name=name, deadline=deadline, description=description)
-    session.add(new_task)
-    session.commit()
-    return new_task
-
-
-def get_tasks(option: str) -> List[Task]:
-    today = datetime.date(datetime.utcnow()).strftime("%Y-%m-%d")
-    week_later = (datetime.date(datetime.utcnow()) + timedelta(days=7)).strftime("%Y-%m-%d")
-    option_dict = {
-        "--all": session.query(Task)
-            .filter(Task.done.is_(False))
-            .order_by(Task.deadline.is_(None), Task.deadline)
-            .all(),
-        "--today": session.query(Task)
-            .filter(Task.deadline == today, Task.done.is_(False))
-            .all(),
-        "--missed": session.query(Task)
-            .filter(Task.deadline < today, Task.done.is_(False))
-            .all(),
-        "--week": session.query(Task)
-            .filter(Task.deadline < week_later, Task.done.is_(False))
-            .all(),
-        "--done": session.query(Task)
-            .filter(Task.done)
-            .all()
-    }
-    return option_dict.get(option)
-
-
-def get_column_names() -> List[str]:
-    return Task.__table__.columns.keys()[1:-1]
-
-
 def get_task_values(option: str) -> List[List]:
     return [[task.name,
              task.deadline.strftime("%Y-%m-%d") if task.deadline else "No hurry",
@@ -65,6 +97,13 @@ def get_task_values(option: str) -> List[List]:
              task.creation_date.strftime("%Y-%m-%d %H:%M"),
              task.task_hash]
             for task in get_tasks(option)]
+
+
+"""
+Lazy mode functions
+"""
+
+
 
 
 def get_table(option: str) -> List[List]:
@@ -79,12 +118,7 @@ def find_task_by_hash(sys_args: List[str], hash_index: int) -> Task:
 def find_task_for_table(sys_args: List[str]) -> Union[Tuple[bool, List], Tuple[bool, int]]:
     task = find_task_by_hash(sys_args, 2)
     if task:
-        return True, [get_column_names(),
-                      [task.name,
-                       task.deadline.strftime("%Y-%m-%d") if task.deadline else "No hurry",
-                       task.description if task.description else "---",
-                       task.creation_date.strftime("%Y-%m-%d %h:%M"),
-                       task.task_hash]]
+        return True, get_table_with_one_record(task)
     return False, 5
 
 
@@ -155,3 +189,47 @@ def validate_and_remove_task(sys_args: List[str]) -> Tuple[bool, int]:
     session.delete(task)
     session.commit()
     return True, 4
+
+
+def lazy_find_task(task_hash: Union[str, int]) -> Task:
+    return session.query(Task).filter(Task.task_hash == task_hash).first()
+
+
+def lazy_find_and_remove_task(task_hash: str) -> Tuple[bool, int]:
+    task = lazy_find_task(task_hash)
+    if task:
+        session.delete(task)
+        session.commit()
+        return True, 4
+    return False, 5
+
+
+def lazy_update_task(task: Task, name: str, deadline: datetime.date, description: str) -> Tuple[bool, int]:
+    if not lazy_find_task(task.task_hash):
+        return False, 5
+    task.name = name if name else task.name
+    task.deadline = deadline if deadline else task.deadline
+    task.description = description if description else task.description
+    session.commit()
+    return True, 2
+
+
+def lazy_finish_or_undo_task(task: Task) -> Tuple[bool, int]:
+    if not lazy_find_task(task.task_hash):
+        return False, 5
+    if task.done:
+        ret_val = (True, 5)
+    else:
+        ret_val = (True, 3)
+    task.done = not task.done
+    return ret_val
+
+
+def get_table_with_one_record(task: Task):
+    return [get_column_names(),
+            [task.name,
+             task.deadline.strftime("%Y-%m-%d") if task.deadline else "No hurry",
+             task.description if task.description else "---",
+             task.creation_date.strftime("%Y-%m-%d %h:%M"),
+             task.task_hash]]
+
