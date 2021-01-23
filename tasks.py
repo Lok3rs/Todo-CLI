@@ -1,4 +1,4 @@
-from tasks.controller.controller import main
+from tasks.controller.controller import main_controller
 
 if __name__ == "__main__":
-    main()
+    main_controller()

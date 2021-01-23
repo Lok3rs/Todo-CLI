@@ -1,14 +1,14 @@
 from tasks.view.messages import HELP_MSG, SUCCESS_MSG, ERROR_MSG
 
 
-def print_message(success, result, print_help, listing):
+def print_message(success, result, print_help=False, listing=False):
     if success and listing:
         print_table(result)
     elif success and print_help:
         print(HELP_MSG.get(result))
     elif success:
         print(SUCCESS_MSG.get(result))
-    else:
+    elif result:
         print(ERROR_MSG.get(result))
 
 
