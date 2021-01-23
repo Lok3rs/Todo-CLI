@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import List, Union, Tuple, Dict
+from typing import List, Union, Tuple
 
 from tasks import session
 from tasks.model.model import Task
