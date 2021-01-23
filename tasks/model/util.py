@@ -1,25 +1,16 @@
-import re
-from datetime import datetime
-
-from tasks.view.terminal import print_message, ERROR_MSG
+from typing import Union, List, Dict
 
 COMMAND_INDEX = 1
 ALLOWED_COMMANDS = ["add", "update", "remove", "list", "finish"]
 
 
-def generate_hash(obj):
+def generate_hash(obj: Union[str, int]) -> int:
     return hash(obj) % (10 ** 8)
 
 
-
-
-
-def unpack_args(args):
+def unpack_args(args: List) -> Union[Dict, bool]:
     try:
         args_dict = dict(arg.split(" ", 1) for arg in args)
         return args_dict
     except ValueError:
         return False
-
-
-

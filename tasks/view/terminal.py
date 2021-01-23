@@ -4,7 +4,14 @@ ERROR_MSG = {
     2: "Too many arguments provided. Check --help to see proper structure.",
     3: "Invalid optional arguments provided. Check --help to see proper structure.",
     4: "Wrong date provided. Date should be in format YYYY-MM-DD and can not be settled in past.",
-    5: "No task with provided hash in database. Check it and try again."
+    5: "No task with provided hash in database. Check it and try again.",
+    6: "Some error occurred while adding tasks. Check your query and try again"
+}
+
+SUCCESS_MSG = {
+    1: "Task created successfully.",
+    2: "Task updated successfully",
+    3: "Task marked as done."
 }
 
 
@@ -19,7 +26,7 @@ def print_table(tables):
     row_separator = "-"
     corner_ac = "/"
     corner_bd = "\\"
-    max_column_width = [0 for element in range(len(table_with_strings[0]))]
+    max_column_width = [0 for _ in range(len(table_with_strings[0]))]
 
     for row in table_with_strings:
         for result_index in range(len(row)):
