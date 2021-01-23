@@ -4,17 +4,21 @@ from typing import List, Union, Tuple
 from tasks import session
 from tasks.model.model import Task
 from tasks.model.validators import validate_add_task_arguments, validate_update_args, validate_listing_arguments
+from sqlalchemy.exc import DataError
 
 
-def validate_and_add_task(sys_args: List[str]):
-    task_validation = validate_add_task_arguments(sys_args)
-    if type(task_validation) == dict:
-        new_task = add_task(name=task_validation.get("name"),
-                            deadline=task_validation.get("deadline"),
-                            description=task_validation.get("description"))
-        return True, 1 if new_task else False, 6
-    else:
-        return False, task_validation
+def validate_and_add_task(sys_args: List[str]) -> Tuple[bool, int]:
+    try:
+        task_validation = validate_add_task_arguments(sys_args)
+        if type(task_validation) == dict:
+            new_task = add_task(name=task_validation.get("name"),
+                                deadline=task_validation.get("deadline"),
+                                description=task_validation.get("description"))
+            return True, 1 if new_task else (False, 6)
+        else:
+            return False, task_validation
+    except DataError:
+        return False, 7
 
 
 def add_task(name: str, deadline: datetime = None, description: str = None) -> Task:
@@ -80,20 +84,23 @@ def finish_task(sys_args: List[str]) -> Union[Tuple[bool, str], Tuple[bool, int]
 
 
 def validate_and_update_task(sys_args: List[str]) -> Tuple[bool, int]:
-    task = find_task_by_hash(sys_args, -1)
-    if not task:
-        return False, 5
-    new_values_validator = validate_update_args(sys_args)
-    if type(new_values_validator) != dict:
-        return False, new_values_validator
-    task.name = new_values_validator.get("name") \
-        if new_values_validator.get("name") else task.name
-    task.deadline = new_values_validator.get("deadline") \
-        if new_values_validator.get("deadline") else task.deadline
-    task.description = new_values_validator.get("description") \
-        if new_values_validator.get("description") else task.description
-    session.commit()
-    return True, 2
+    try:
+        task = find_task_by_hash(sys_args, -1)
+        if not task:
+            return False, 5
+        new_values_validator = validate_update_args(sys_args)
+        if type(new_values_validator) != dict:
+            return False, new_values_validator
+        task.name = new_values_validator.get("name") \
+            if new_values_validator.get("name") else task.name
+        task.deadline = new_values_validator.get("deadline") \
+            if new_values_validator.get("deadline") else task.deadline
+        task.description = new_values_validator.get("description") \
+            if new_values_validator.get("description") else task.description
+        session.commit()
+        return True, 2
+    except DataError:
+        return False, 7
 
 
 def validate_and_get_list(sys_args: List[str]) -> Union[Tuple[bool, List], Tuple[bool, int]]:
