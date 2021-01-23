@@ -1,7 +1,7 @@
 import sys
 
 from tasks.model.data_manager import (finish_task, validate_and_update_task, validate_and_add_task,
-                                      validate_and_get_list, validate_and_remove_task, undo_task)
+                                      validate_and_get_list, validate_and_remove_task, undo_task, find_task_for_table)
 from tasks.model.util import COMMAND_INDEX, ALLOWED_COMMANDS
 from tasks.model.validators import validate_help
 from tasks.view.terminal import print_message
@@ -14,7 +14,8 @@ controller_options = {
     "update": validate_and_update_task,
     "remove": validate_and_remove_task,
     "help": validate_help,
-    "undo": undo_task
+    "undo": undo_task,
+    "find": find_task_for_table
 }
 
 
@@ -29,6 +30,7 @@ def main_controller():
         success, result = func(sys_args)
         print_message(success, result,
                       print_help=func == validate_help,
-                      listing=func == validate_and_get_list)
+                      listing=(func == validate_and_get_list or func == find_task_for_table))
     except TypeError:
         print_message(success=False, result=0)
+

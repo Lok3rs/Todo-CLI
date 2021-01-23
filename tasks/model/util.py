@@ -1,7 +1,7 @@
 from typing import Union, List, Dict
 
 COMMAND_INDEX = 1
-ALLOWED_COMMANDS = ["add", "update", "remove", "list", "finish", "help", "undo"]
+ALLOWED_COMMANDS = ["add", "update", "remove", "list", "finish", "help", "undo", "find"]
 
 
 def generate_hash(obj: Union[str, int]) -> int:

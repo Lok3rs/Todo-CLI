@@ -43,8 +43,8 @@ def get_tasks(option: str) -> List[Task]:
                            .filter(Task.deadline < today, Task.done.is_(False))
                            .all(),
         "--week": session.query(Task)
-                         .filter(Task.deadline < week_later, Task.done.is_(False))
-                         .all(),
+                           .filter(Task.deadline < week_later, Task.done.is_(False))
+                           .all(),
         "--done": session.query(Task)
                          .filter(Task.done)
                          .all()
@@ -72,6 +72,18 @@ def get_table(option: str) -> List[List]:
 def find_task_by_hash(sys_args: List[str], hash_index: int) -> Task:
     task = session.query(Task).filter(Task.task_hash == sys_args[hash_index]).first()
     return task
+
+
+def find_task_for_table(sys_args: List[str]) -> Union[Tuple[bool, List], Tuple[bool, int]]:
+    task = find_task_by_hash(sys_args, 2)
+    if task:
+        return True, [get_column_names(),
+                      [task.name,
+                      task.deadline.strftime("%Y-%m-%d") if task.deadline else "No hurry",
+                      task.description,
+                      task.creation_date,
+                      task.task_hash]]
+    return False, 5
 
 
 def finish_task(sys_args: List[str]) -> Tuple[bool, int]:

@@ -8,8 +8,9 @@ def print_message(success, result, print_help=False, listing=False):
         print(HELP_MSG.get(result))
     elif success:
         print(SUCCESS_MSG.get(result))
-    elif result:
+    else:
         print(ERROR_MSG.get(result))
+
 
 
 def print_table(tables):
