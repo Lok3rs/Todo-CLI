@@ -136,16 +136,13 @@ def validate_listing_arguments(sys_args: List[str]) -> Union[str, int]:
     OPT_ARGS_INDEX_FROM = 2
     ARG_INDEX = 0
 
-    span = 2
-
     # If not optional argument provided returns default argument
     if len(sys_args) == MIN_ARGS_ARR_LENGTH:
         return OPTIONAL_ARGS[ARG_INDEX]
 
     # try to validate if user insert valid argument for listing and if he inputs only 1 arg
     try:
-        opt_args_tmp = sys_args[OPT_ARGS_INDEX_FROM:]
-        provided_args = [" ".join(opt_args_tmp[i:i + span]) for i in range(len(opt_args_tmp), span)]
+        provided_args = sys_args[OPT_ARGS_INDEX_FROM:]
         if provided_args[ARG_INDEX] not in OPTIONAL_ARGS:
             return 1
         elif len(provided_args) > MAX_OPT_ARGS_AMOUNT \
