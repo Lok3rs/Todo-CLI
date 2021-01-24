@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.ddl import CreateTable
 from sqlalchemy_utils import database_exists, create_database
+from sqlalchemy.exc import OperationalError
 
 from tasks.model.model import Task
 
@@ -21,10 +22,12 @@ session = Session()
 
 tasks_table = Task.__table__
 
-
-if not database_exists(engine.url):
-    create_database(engine.url)
-    meta.create_all()
-    engine.connect().execute(CreateTable(tasks_table))
-else:
-    engine.connect()
+try:
+    if not database_exists(engine.url):
+        create_database(engine.url)
+        meta.create_all()
+        engine.connect().execute(CreateTable(tasks_table))
+    else:
+        engine.connect()
+except OperationalError as err:
+    print(err)

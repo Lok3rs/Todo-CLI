@@ -1,5 +1,7 @@
 import sys
 
+from sqlalchemy.exc import OperationalError
+
 import tasks.model.data_manager as dm
 import tasks.view.terminal as view
 
@@ -42,3 +44,7 @@ def main_controller():
 
     except IndexError:
         view.show_info("You should provide some arguments after calling a program")
+
+    except OperationalError:
+        view.show_info("Problem with connection to database. Check if all your environment "
+                       "variables are settled properly")
