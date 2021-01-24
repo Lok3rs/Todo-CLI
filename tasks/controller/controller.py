@@ -30,14 +30,12 @@ def main_controller():
         elif cmd == "lazy":
             lazy_controller()
             return
-        try:
-            func = controller_options.get(cmd)
-            success, msg_index = func(sys_args)
-            view.print_message(success, msg_index,
-                               print_help=func == validate_help,
-                               listing=(func == dm.validate_and_get_list or func == dm.find_task_for_table))
-        except TypeError:
-            view.print_message(success=False, msg_index=0)
+
+        func = controller_options.get(cmd)
+        success, msg_index = func(sys_args)
+        view.print_message(success, msg_index,
+                           print_help=func == validate_help,
+                           listing=(func == dm.validate_and_get_list or func == dm.find_task_for_table))
 
     except KeyboardInterrupt:
         view.show_info("\nWell, you could finish it more elegant... :)")
@@ -48,3 +46,6 @@ def main_controller():
     except OperationalError:
         view.show_info("Problem with connection to database. Check if all your environment "
                        "variables are settled properly")
+
+    except TypeError:
+        view.print_message(success=False, msg_index=0)

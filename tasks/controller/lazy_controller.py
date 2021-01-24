@@ -35,21 +35,21 @@ def listing_controller():
 
 
 def new_task_controller():
-    name = view.get_user_input("Task name (max 30 characters): ")
+    name = view.get_user_input("Task name (required, 1-30 characters): ")
     while len(name) > 30 or len(name) == 0:
         name = view.get_user_input("Name needs to be 1-30 characters long, try again: ")
 
-    description = view.get_user_input("Task description (optional, type ENTER to skip. Max 150 characters): ")
-    while len(description) > 150:
+    description = view.get_user_input("Task description (optional, press ENTER to skip. Max 100 characters): ")
+    while len(description) > 100:
         description = view.get_user_input("Description is too long, try again: ")
     if len(description.strip()) == 0:
         description = None
 
     deadline = view.get_user_input(
-        "Task deadline (optional, type ENTER to skip. In format YYYY-MM-DD, can't be in past")
+        "Task deadline (optional, type ENTER to skip. In format YYYY-MM-DD, can't be in past): ")
 
     while len(deadline.strip()) != 0 and not validate_deadline(deadline):
-        deadline = view.get_user_input("Invalid date, try again: ")
+        deadline = view.get_user_input("Invalid date, try again or press ENTER to skip: ")
 
     deadline = validate_deadline(deadline) if len(deadline.strip()) != 0 else None
 
@@ -59,7 +59,7 @@ def new_task_controller():
 
 
 def remove_task_controller():
-    task_hash = view.get_user_input("Provide a hash of task to delete (type ENTER to cancel): ")
+    task_hash = view.get_user_input("Provide a hash of task to delete (press ENTER to cancel): ")
     if len(task_hash.strip()) == 0:
         view.print_message(success=False, msg_index=11)
     else:
@@ -69,7 +69,7 @@ def remove_task_controller():
 
 
 def update_task_controller():
-    task_hash = view.get_user_input("Provide a hash of task you want to delete (type ENTER to cancel): ")
+    task_hash = view.get_user_input("Provide a hash of task you want to delete (press ENTER to cancel): ")
     if len(task_hash.strip()) == 0:
         view.print_message(success=False, msg_index=11)
         wait()
@@ -81,23 +81,23 @@ def update_task_controller():
         return
 
     view.show_info(f"Current task name '{task.name}'")
-    new_name = view.get_user_input("New task name (max 30 characters, type ENTER to keep current name): ")
+    new_name = view.get_user_input("New task name (max 30 characters, press ENTER to keep current name): ")
     while len(new_name.strip()) > 30:
         new_name = view.get_user_input("Name is too long, try again: ")
     if len(new_name.strip()) == 0:
         new_name = None
 
-    view.show_info(f"Current description: '{task.description}'") if task.description \
-        else view.show_info("No description for this task")
-    new_description = view.get_user_input("New task description (optional, type ENTER to skip. Max 150 characters): ")
-    while len(new_description) > 150:
+    view.show_info(f"Current description: '{task.description}'" if task.description
+                   else "No description for this task")
+    new_description = view.get_user_input("New task description (optional, press ENTER to skip. Max 100 characters): ")
+    while len(new_description) > 100:
         new_description = view.get_user_input("Description is too long, try again: ")
     if len(new_description.strip()) == 0:
         new_description = None
 
     view.show_info(f"Current deadline: {task.deadline.strftime('%Y-%m-%d')}" if task.deadline
                    else "No deadline settled for this task.")
-    new_deadline = view.get_user_input("Task deadline (optional, type ENTER to skip. "
+    new_deadline = view.get_user_input("Task deadline (optional, press ENTER to skip. "
                                        "In format YYYY-MM-DD, can't be in past): ")
 
     while len(new_deadline.strip()) != 0 or not validate_deadline(new_deadline):
@@ -113,7 +113,7 @@ def update_task_controller():
 
 def finish_or_undo_task_controller():
     task_hash = view.get_user_input(
-        "Provide a hash of task you want to finish or mark as undone (type ENTER to cancel): ")
+        "Provide a hash of task you want to finish or mark as undone (press ENTER to cancel): ")
     if len(task_hash.strip()) == 0:
         view.print_message(success=False, msg_index=11)
         wait()
@@ -129,7 +129,7 @@ def finish_or_undo_task_controller():
 
 
 def find_task_controller():
-    task_hash = view.get_user_input("Provide a hash of task to find (type ENTER to cancel): ")
+    task_hash = view.get_user_input("Provide a hash of task to find (press ENTER to cancel): ")
     if len(task_hash.strip()) == 0:
         view.print_message(success=False, msg_index=11)
         wait()

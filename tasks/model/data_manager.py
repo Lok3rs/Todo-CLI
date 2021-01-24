@@ -41,7 +41,7 @@ def get_tasks(option: str) -> List[Task]:
     Function which returns a list of Task objects with given criteria.
 
     :param option: filtering option for dictionary declared in a function. Possible: --all, --today, --missed,
-    --week, --done
+                    --week, --done
     :return: list of Task objects filtered by given option. If wrong option provided, return all objects.
     """
     today = datetime.date(datetime.utcnow()).strftime("%Y-%m-%d")
@@ -74,7 +74,7 @@ def get_task_values(option: str) -> List[List]:
     A function that uses the get_tasks function with an option selected, and returns the data prepared for printing
 
     :param option: a filtering option to be used in the get_tasks function. Possible: --all, --today, --missed,
-    --week, --done
+                    --week, --done
     :return: list containing lists of tasks values with an option selected, prepared to be printed for the user.
     """
     return [[task.name,
@@ -91,9 +91,9 @@ def get_table(option: str) -> List[List]:
     (option passed to the get_task_values function).
 
     :param option: a filtering option to be used in the get_task_values function. Possible: --all, --today,
-    --missed, --week, --done
+                 --missed, --week, --done
     :return: list containing lists of column names and tasks values with an option selected, prepared to be printed
-    for the user.
+                for the user.
     """
     return [get_column_names(), *get_task_values(option)] if get_task_values(option) \
         else [get_column_names(), table_for_not_found_data]
@@ -125,7 +125,7 @@ def validate_and_add_task(sys_args: List[str]) -> Tuple[bool, int]:
 
     :param sys_args: List of arguments received from the command line
     :return: Tuple of boolean and integer. Boolean means if it was successful, integer is index of message from
-    messages.py
+             messages.py
     """
     try:
         task_validation = validate_add_task_arguments(sys_args)
@@ -248,7 +248,7 @@ def validate_and_get_list(sys_args: List[str]) -> Union[Tuple[bool, List], Tuple
 
     :param sys_args: list of arguments provided in command line
     :return: tuple with boolean value meaning if it was successful and table, if validated, or wrong option which
-    was provided
+            was provided
     """
     list_option = validate_listing_arguments(sys_args)
     if type(list_option) != str:
