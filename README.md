@@ -59,6 +59,7 @@ $ SET MYSQL_DB=your_db_name (if doesn't exists app will create it)
 
 You can find all needed informations by typing `tasks.py help` in command line
 
+Recommended using it in full-screen cmd to avoid parting of text.
 ```
     All required parameters are without square brackets, like --name TASK_NAME or TASK_HASH.
     Strings longer than 1 word should be placed inside quotes, eq. "New Task Name"

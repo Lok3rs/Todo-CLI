@@ -59,7 +59,7 @@ def new_task_controller():
 
 
 def remove_task_controller():
-    task_hash = view.get_user_input("Provide a hash of task to delete (type ENTER to cancel")
+    task_hash = view.get_user_input("Provide a hash of task to delete (type ENTER to cancel): ")
     if len(task_hash.strip()) == 0:
         view.print_message(success=False, msg_index=11)
     else:
