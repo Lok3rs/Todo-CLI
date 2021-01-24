@@ -3,6 +3,7 @@ from typing import List, Union, Tuple
 
 from tasks import session
 from tasks.model.model import Task
+from tasks.model.util import table_for_not_found_data
 from tasks.model.validators import validate_add_task_arguments, validate_update_args, validate_listing_arguments
 from sqlalchemy.exc import DataError
 
@@ -94,7 +95,8 @@ def get_table(option: str) -> List[List]:
     :return: list containing lists of column names and tasks values with an option selected, prepared to be printed
     for the user.
     """
-    return [get_column_names(), *get_task_values(option)]
+    return [get_column_names(), *get_task_values(option)] if get_task_values(option) \
+        else [get_column_names(), table_for_not_found_data]
 
 
 def get_table_with_one_record(task: Task):

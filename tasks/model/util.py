@@ -1,6 +1,8 @@
 import os
 from typing import Union, List, Dict
 
+table_for_not_found_data = ["#", "NO", "DATA", "FOUND", "#"]
+
 
 def generate_hash(obj: Union[str, int]) -> int:
     """
