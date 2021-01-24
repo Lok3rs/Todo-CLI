@@ -64,6 +64,11 @@ HELP_MSG = {
         tasks.py remove TASK_HASH 
 
         >>> tasks.py help remove <<< to see more detailed help
+        
+    Lazy mode:
+        tasks.py lazy
+        
+        Launches the program with a user-visible menu for managing the task list
     """,
     1: """
     Add task parameters:
