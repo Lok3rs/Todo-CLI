@@ -27,7 +27,7 @@ By default it is set to MySQL database, but thanks to SQLAlchemy you can change 
 
 If you want to use app with any other SQL check https://docs.sqlalchemy.org/en/14/core/engines.html to see proper connection strings and change it inside of ```create_engine()```
 
-Next step is to set environment variables used by `create_engine()`
+Next step is to set environment variables used by `create_engine()` to create connection string.
 
 **Linux/Mac**
 ```
