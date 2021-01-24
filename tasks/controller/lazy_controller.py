@@ -95,8 +95,8 @@ def update_task_controller():
     if len(new_description.strip()) == 0:
         new_description = None
 
-    view.show_info(f"Current deadline: {task.deadline.strftime('%Y-%m-%d')}") if task.deadline \
-        else view.show_info("No deadline settled for this task.")
+    view.show_info(f"Current deadline: {task.deadline.strftime('%Y-%m-%d')}" if task.deadline
+                   else "No deadline settled for this task.")
     new_deadline = view.get_user_input("Task deadline (optional, type ENTER to skip. "
                                        "In format YYYY-MM-DD, can't be in past): ")
 
