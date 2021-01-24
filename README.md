@@ -23,9 +23,9 @@ engine = create_engine("mysql+mysqldb://{}:{}@{}/{}".format(
     os.environ.get("MYSQL_DB")
 ))
 ```
-By default it is set to MySQL database, but thanks to SQLAlchemy you can change it do any SQL db.
+By default it is set to MySQL database, but thanks to SQLAlchemy you can change it to any SQL db.
 
-If you want to used app with any other SQL check https://docs.sqlalchemy.org/en/14/core/engines.html to see proper connection strings and change it inside of ```create_engine()```
+If you want to use app with any other SQL check https://docs.sqlalchemy.org/en/14/core/engines.html to see proper connection strings and change it inside of ```create_engine()```
 
 Next step is to set environment variables used by `create_engine()`
 
