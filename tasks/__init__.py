@@ -27,6 +27,7 @@ try:
         create_database(engine.url)
         meta.create_all()
         engine.connect().execute(CreateTable(tasks_table))
+        print(f"Database named {os.environ.get('MYSQL_DB')} created successfully.")
     else:
         engine.connect()
 except OperationalError as err:
