@@ -24,7 +24,7 @@ def validate_add_task_arguments(sys_args: List) -> Union[int, Dict]:
     try:
         # Try to join optional command with it's value to be in same element of list
         args_tmp = sys_args[ARGS_INDEX_FROM:]
-        args = [" ".join(args_tmp[i:i + span]) for i in range(len(args_tmp), span)]
+        args = [" ".join(args_tmp[i:i + span]) for i in range(0, len(args_tmp), span)]
     except IndexError:
         return 1
 
@@ -76,7 +76,7 @@ def validate_update_args(sys_args: List[str]) -> Union[int, Dict]:
     try:
         # Try to join optional command with it's value to be in same element of list
         opt_args_tmp = sys_args[OPT_ARGS_INDEX_FROM:HASH_INDEX]
-        optional_args = [" ".join(opt_args_tmp[i:i + span]) for i in range(len(opt_args_tmp), span)]
+        optional_args = [" ".join(opt_args_tmp[i:i + span]) for i in range(0, len(opt_args_tmp), span)]
     except IndexError:
         return 1
 
