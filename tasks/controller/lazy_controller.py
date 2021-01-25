@@ -1,17 +1,18 @@
-import tasks.model.data_manager as dm
-import tasks.view.terminal as view
-
+from tasks import view, validator
 from tasks.model.util import clear_screen, wait
-from tasks.model.validators import validate_deadline
+from tasks.view.terminal import main_menu_options, list_menu_options
+from tasks.model.data_manager import LazyDataManager
+
+lazy_dm = LazyDataManager()
 
 
 def lazy_controller():
     option = 1
     cls_mode = False
     while option != "0":
-        view.print_menu(view.main_menu_options)
+        view.print_menu(main_menu_options)
         option = view.get_user_input()
-        while not option.isnumeric() or int(option) not in range(len(view.main_menu_options)):
+        while not option.isnumeric() or int(option) not in range(len(main_menu_options)):
             option = view.get_user_input("Invalid option, try again: ")
         option = lazy_controller_options.get(int(option))
         if option == "cls_change":
@@ -23,14 +24,14 @@ def lazy_controller():
 
 
 def listing_controller():
-    view.print_menu(view.list_menu_options, header="Listing menu")
+    view.print_menu(list_menu_options, header="Listing menu")
     option = view.get_user_input()
     if option == "0":
         return
-    while not option.isnumeric() or int(option) not in range(len(view.list_menu_options)):
+    while not option.isnumeric() or int(option) not in range(len(list_menu_options)):
         option = view.get_user_input("Invalid option, try again: ")
     listing_option = listing_controller_options.get(int(option))
-    view.print_table(dm.get_table(listing_option))
+    view.print_table(lazy_dm.get_table(listing_option))
     wait()
 
 
@@ -48,12 +49,12 @@ def new_task_controller():
     deadline = view.get_user_input(
         "Task deadline (optional, type ENTER to skip. In format YYYY-MM-DD, can't be in past): ")
 
-    while len(deadline.strip()) != 0 and not validate_deadline(deadline):
+    while len(deadline.strip()) != 0 and not validator.validate_deadline(deadline):
         deadline = view.get_user_input("Invalid date, try again or press ENTER to skip: ")
 
-    deadline = validate_deadline(deadline) if len(deadline.strip()) != 0 else None
+    deadline = validator.validate_deadline(deadline) if len(deadline.strip()) != 0 else None
 
-    dm.add_task(name=name, deadline=deadline, description=description)
+    lazy_dm.add_task(name=name, deadline=deadline, description=description)
     view.print_message(success=True, msg_index=1)
     wait()
 
@@ -63,7 +64,7 @@ def remove_task_controller():
     if len(task_hash.strip()) == 0:
         view.print_message(success=False, msg_index=11)
     else:
-        success, msg_index = dm.lazy_find_and_remove_task(task_hash)
+        success, msg_index = lazy_dm.lazy_find_and_remove_task(task_hash)
         view.print_message(success, msg_index)
     wait()
 
@@ -74,7 +75,7 @@ def update_task_controller():
         view.print_message(success=False, msg_index=11)
         wait()
         return
-    task = dm.lazy_find_task(task_hash)
+    task = lazy_dm.lazy_find_task(task_hash)
     if not task:
         view.print_message(success=False, msg_index=5)
         wait()
@@ -100,13 +101,13 @@ def update_task_controller():
     new_deadline = view.get_user_input("Task deadline (optional, press ENTER to skip. "
                                        "In format YYYY-MM-DD, can't be in past): ")
 
-    while len(new_deadline.strip()) != 0 or not validate_deadline(new_deadline):
+    while len(new_deadline.strip()) != 0 and not validator.validate_deadline(new_deadline):
         new_deadline = view.get_user_input("Invalid date, try again: ")
 
-    new_deadline = validate_deadline(new_deadline) if len(new_deadline.strip()) != 0 else None
+    new_deadline = validator.validate_deadline(new_deadline) if len(new_deadline.strip()) != 0 else None
 
-    success, msg_index = dm.lazy_update_task(task=task, name=new_name,
-                                             description=new_description, deadline=new_deadline)
+    success, msg_index = lazy_dm.lazy_update_task(task=task, name=new_name,
+                                                  description=new_description, deadline=new_deadline)
     view.print_message(success, msg_index)
     wait()
 
@@ -118,12 +119,12 @@ def finish_or_undo_task_controller():
         view.print_message(success=False, msg_index=11)
         wait()
         return
-    task = dm.lazy_find_task(task_hash)
+    task = lazy_dm.lazy_find_task(task_hash)
     if not task:
         view.print_message(success=False, msg_index=5)
         wait()
         return
-    success, msg_index = dm.lazy_finish_or_undo_task(task)
+    success, msg_index = lazy_dm.lazy_finish_or_undo_task(task)
     view.print_message(success, msg_index)
     wait()
 
@@ -134,12 +135,12 @@ def find_task_controller():
         view.print_message(success=False, msg_index=11)
         wait()
         return
-    task = dm.lazy_find_task(task_hash)
+    task = lazy_dm.lazy_find_task(task_hash)
     if not task:
         view.print_message(success=False, msg_index=5)
         wait()
         return
-    view.print_table(dm.get_table_with_one_record(task))
+    view.print_table(lazy_dm.get_table_with_one_record(task))
     wait()
 
 

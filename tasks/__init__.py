@@ -7,6 +7,8 @@ from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.exc import OperationalError
 
 from tasks.model.model import Task
+from tasks.model.validators import Validator
+from tasks.view.terminal import View
 
 engine = create_engine("mysql+mysqldb://{}:{}@{}/{}".format(
     os.environ.get("MYSQL_USERNAME"),
@@ -20,6 +22,9 @@ meta.bind = engine
 Session = sessionmaker(bind=engine)
 session = Session()
 
+view = View()
+validator = Validator()
+
 tasks_table = Task.__table__
 
 try:
@@ -32,3 +37,5 @@ try:
         engine.connect()
 except OperationalError as err:
     print(err)
+
+
