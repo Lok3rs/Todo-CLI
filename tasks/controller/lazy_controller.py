@@ -101,7 +101,7 @@ def update_task_controller():
     new_deadline = view.get_user_input("Task deadline (optional, press ENTER to skip. "
                                        "In format YYYY-MM-DD, can't be in past): ")
 
-    while len(new_deadline.strip()) != 0 or not validator.validate_deadline(new_deadline):
+    while len(new_deadline.strip()) != 0 and not validator.validate_deadline(new_deadline):
         new_deadline = view.get_user_input("Invalid date, try again: ")
 
     new_deadline = validator.validate_deadline(new_deadline) if len(new_deadline.strip()) != 0 else None
