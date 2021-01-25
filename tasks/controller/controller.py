@@ -47,5 +47,5 @@ def main_controller():
         view.show_info("Problem with connection to database. Check if all your environment "
                        "variables are settled properly")
 
-    except TypeError:
-        view.print_message(success=False, msg_index=0)
+    # except TypeError:
+    #     view.print_message(success=False, msg_index=0)
